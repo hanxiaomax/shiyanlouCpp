@@ -30,10 +30,10 @@ CourseManager::CourseManager(Course course[])
 CourseManager::CourseManager(vector<Course> v)
 {
 	CourseList=v;	
-	for(auto it=CourseList.begin();it!=CourseList.end();it++)
+	/*for(auto it=CourseList.begin();it!=CourseList.end();it++)
 	{
 		cout<<(*it).getName()<<endl;
-	}
+	}*/
 	
 }
 
@@ -119,11 +119,18 @@ CmdManager::CmdManager(CourseManager &cm):cm(cm)
 {
 	CMD cmd1={1,"add","add <course name>"},
 		cmd2={2,"delete","delete <course id/name>"},
-		cmd3={3,"help","print help"};
+		cmd3={3,"help","print help"},
+	    cmd4={4,"course","print course information"},
+		cmd5={5,"log","print log"},
+		cmd6={6,"courses","print course list"};
 
 	cmdList.push_back(cmd1);
 	cmdList.push_back(cmd2);
 	cmdList.push_back(cmd3);
+	cmdList.push_back(cmd4);
+	cmdList.push_back(cmd5);
+	cmdList.push_back(cmd6);
+
 }
 
 
@@ -172,21 +179,28 @@ void CmdManager::Cmdparser(string cmdstring)
 
 	if(isValid(cmd_name,param_list))
 	{
+		if(cmd_name!="log")
+			cmdlog.push_back(cmd_name);
 		switch(getid(cmd_name))
 		{
 		case 1://添加课程
 			cm.addCourse(param_list[0]);
 			break;
 		case 2:
+			cm.deleteCourse(param_list[0]);
 			break;
 		case 3:
 			printHelp();
 			break;
 		case 4:
+			cm.printCourse(param_list[0]);
 			break;
 		case 5:
+			printLog();
 			break;
-
+		case 6:
+			cm.printCourseList();
+			break;
 		}
 	}
 
@@ -212,4 +226,11 @@ bool CmdManager::isValid(string cmd,vector<string> param_list)
 			
 	}
 	return false;
+}
+
+
+void  CmdManager::printLog()
+{
+	for(auto it= cmdlog.begin();it!= cmdlog.end();it++)
+		cout<<(*it)<<endl;
 }

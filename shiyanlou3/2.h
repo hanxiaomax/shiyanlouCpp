@@ -78,13 +78,14 @@ class CmdManager
  	void printHelp();//´òÓ¡ÃüÁîĞĞ°ïÖú
  	void Cmdparser(string cmdstring);//½âÎöÃüÁî
  	bool isValid(string cmd,vector<string> param_list);//ÅĞ¶ÏÃüÁîÊÇ·ñºÏ·¨
- 	void printLog();
+	void printLog();
 
  private:
  	void add2log(string cmd,string result);
 	int getid(string cmd);
  private:
 	 vector<CMD> cmdList;
+	 vector<string> cmdlog;
 	 CourseManager &cm;
 	 
 };

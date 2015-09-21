@@ -14,22 +14,18 @@ int main()
 	v.push_back(c_git);
 
 	CourseManager cm(v);
-
 	cm.addCourse("C/C++");
 	cm.addCourse(c_MySQL);
-
-	cm.deleteLastCourse();
-	cm.deleteCourse("Linux");
-	cm.deleteCourse(0);
+	
 
 
-	cout<<cm.getCourseNum()<<endl;
-	cm.printCourseList();
-	cm.printCourse(0);
-	cm.printCourse("GIT");
+	//cout<<cm.getCourseNum()<<endl;
+	//cm.printCourseList();
+	//cm.printCourse(0);
+	//cm.printCourse("GIT");
 
 	CmdManager cmdm(cm);
-	cmdm.printHelp();
+	//cmdm.printHelp();
 
 	while(1)
 	{
