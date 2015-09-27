@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include<algorithm>
 
 using namespace std;
 
@@ -15,6 +16,8 @@ typedef struct
 
 class Course
 {
+	friend bool cmpincrease (const Course a, const Course b);//用于升序比较
+	friend bool cmpdecrease (const Course a, const Course b);//用于降序比较
 public:
 	Course(){};
 	Course(string CourseName);//构造函数
@@ -24,8 +27,8 @@ public:
 	int setID(){return CourseID=id++;}
 	int getID(){return CourseID;}
 
-	void setName(string CourseName){CourseName=CourseName;}
-	string getName(){return CourseName;}
+	void setName(string CourseName){CourseName=CourseName;}//设置课程名
+	string getName(){return CourseName;}//获取课程名
 
 	void printInfo();//打印课程信息
 	~Course(){};
@@ -59,11 +62,17 @@ public:
 	void deleteCourse(string name);//删除课程
 
 	void printCourseList();
+	void printCourseList(vector<Course> v);
 
 	void printCourse(int id);//打印课程信息
 	void printCourse(string name);//打印课程信息
+	void printCourse(Course c);
 
 	void write2file(){};
+	vector<Course> Listsort(bool reverse=false);//课程排序并打印，不是在原列表中排序
+
+	bool findCourse(string courseName,Course &c);
+
 private:
 	vector<Course> CourseList;	
 
@@ -78,7 +87,7 @@ class CmdManager
  	void printHelp();//打印命令行帮助
  	void Cmdparser(string cmdstring);//解析命令
  	bool isValid(string cmd,vector<string> param_list);//判断命令是否合法
-	void printLog();
+	void printLog();//打印命令记录
 
  private:
  	void add2log(string cmd,string result);

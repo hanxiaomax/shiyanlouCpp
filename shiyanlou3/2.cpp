@@ -41,10 +41,12 @@ void CourseManager::addCourse(string name)
 {
 	Course c(name);//非拷贝初始化
 	CourseList.push_back(c);
+	cout<<"[succeed]"<<endl;
 }
 void CourseManager::addCourse(Course course)
 {
 	CourseList.push_back(course);
+	cout<<"[succeed]"<<endl;
 }
 
 void CourseManager::deleteCourse(int id)
@@ -57,6 +59,7 @@ void CourseManager::deleteCourse(int id)
 			break;
 		}
 	}
+	cout<<"[succeed]"<<endl;
 }
 void CourseManager::deleteCourse(string name)
 {
@@ -68,6 +71,7 @@ void CourseManager::deleteCourse(string name)
 			break;
 		}
 	}
+	cout<<"[succeed]"<<endl;
 }
 
 void  CourseManager::printCourse(int id)
@@ -80,6 +84,7 @@ void  CourseManager::printCourse(int id)
 			break;
 		}
 	}
+
 }
 void  CourseManager::printCourse(string name)
 {
@@ -92,27 +97,48 @@ void  CourseManager::printCourse(string name)
 		}
 	}
 }
+void  CourseManager::printCourse(Course c)
+{
+	for (auto it=CourseList.begin(); it!=CourseList.end(); ++it)
+	{	
+		if((*it).getID()==(*it).getID())//此处比较id，因为id是唯一的。也可以重载==来比较两个对象
+		{
+			(*it).printInfo();
+			break;
+		}
+	}
+}
 
 
 void CourseManager::printCourseList()
 {
-	cout<<"=========Course List============"<<endl;
+	cout<<"============Course List==============="<<endl;
 	for (int i = 0; i < CourseList.size(); ++i)
 	{
 		CourseList[i].printInfo();
 	}
-	cout<<"================================"<<endl;
+	cout<<"======================================"<<endl;
+}
+
+void CourseManager::printCourseList(vector<Course> v)
+{
+	cout<<"============Course List==============="<<endl;
+	for (int i = 0; i < v.size(); ++i)
+	{
+		v[i].printInfo();
+	}
+	cout<<"======================================"<<endl;
 }
 
 
 void CmdManager::printHelp()
 {
-	cout<<"==============Help=============="<<endl;
+	cout<<"=================Help================="<<endl;
 	for(auto it=cmdList.begin();it!=cmdList.end();it++)
 	{
 		cout<<"CMD: "<<(*it).cmd<<"\t"<<"Usage: "<<(*it).help<<endl;
 	}
-	cout<<"================================"<<endl;
+	cout<<"======================================"<<endl;
 }
 
 CmdManager::CmdManager(CourseManager &cm):cm(cm)
@@ -122,7 +148,10 @@ CmdManager::CmdManager(CourseManager &cm):cm(cm)
 		cmd3={3,"help","print help"},
 	    cmd4={4,"course","print course information"},
 		cmd5={5,"log","print log"},
-		cmd6={6,"courses","print course list"};
+		cmd6={6,"courses","print course list"},
+		cmd7={7,"sort","sort <up/down>"},
+		cmd8={8,"find","find <name>"};
+		
 
 	cmdList.push_back(cmd1);
 	cmdList.push_back(cmd2);
@@ -130,7 +159,47 @@ CmdManager::CmdManager(CourseManager &cm):cm(cm)
 	cmdList.push_back(cmd4);
 	cmdList.push_back(cmd5);
 	cmdList.push_back(cmd6);
+	cmdList.push_back(cmd7);
+	cmdList.push_back(cmd8);
 
+}
+//升序
+bool cmpincrease (const Course a, const Course b)
+{
+	return a.CourseName < b.CourseName;
+}
+//降序
+bool cmpdecrease (const Course a, const Course b)
+{
+	return a.CourseName > b.CourseName;
+}
+
+//课程排序
+vector<Course> CourseManager::Listsort(bool reverse)
+{
+	vector<Course> temp=CourseList;
+	if(reverse)
+		sort(temp.begin(),temp.end(), cmpdecrease);
+	else
+		sort(temp.begin(),temp.end(), cmpincrease);
+	
+	
+	return temp;
+}
+bool CourseManager::findCourse(string courseName,Course &c)
+{
+	
+	for (auto it=CourseList.begin(); it!=CourseList.end(); ++it)
+	{	
+		auto temp=((*it).getName()).find(courseName);
+		if(temp!=string::npos)
+		{
+			c=*it;
+			return true;
+		}	
+	}
+	return false;
+	
 }
 
 
@@ -151,13 +220,14 @@ void CmdManager::Cmdparser(string cmdstring)
 	vector<string> param_list;
 	int i=0;
 
+	//获取命令
 	while(i!=cmdstring.size()&&cmdstring[i]!=' ')
 	{
 		cmd_name+=cmdstring[i];
 		i++;
 	}
 
-
+	//获取参数
 	for(i=i+1;i<=cmdstring.size();i++)
 	{
 		if(i<cmdstring.size()&&cmdstring[i]!=' ')
@@ -179,15 +249,24 @@ void CmdManager::Cmdparser(string cmdstring)
 
 	if(isValid(cmd_name,param_list))
 	{
+		
 		if(cmd_name!="log")
 			cmdlog.push_back(cmd_name);
+
 		switch(getid(cmd_name))
 		{
 		case 1://添加课程
 			cm.addCourse(param_list[0]);
 			break;
 		case 2:
-			cm.deleteCourse(param_list[0]);
+			if(param_list.size()==1)
+			{
+				cm.deleteCourse(param_list[0]);//不能按id删除
+			}
+			else
+			{
+				cm.deleteLastCourse();
+			}
 			break;
 		case 3:
 			printHelp();
@@ -201,7 +280,27 @@ void CmdManager::Cmdparser(string cmdstring)
 		case 6:
 			cm.printCourseList();
 			break;
+		case 7://排序，提供升序和降序两种方式
+			{
+				vector<Course> v;
+				if(param_list[0]=="down")
+					v=cm.Listsort(true);
+				else
+					v=cm.Listsort();
+				cm.printCourseList(v);
+				break;
+			}
+		case 8://查找
+			{
+				Course temp;
+				if(cm.findCourse(param_list[0],temp))
+					temp.printInfo() ;
+				else
+					cout<<"\""<<param_list[0]<<"\" Not Found"<<endl;
+			}
+			break;
 		}
+		return ;
 	}
 
 	else
@@ -213,7 +312,7 @@ void CmdManager::Cmdparser(string cmdstring)
 }
 bool CmdManager::isValid(string cmd,vector<string> param_list)
 {
-	int param_num[10]={-1,1,1,0};
+	int param_num[20]={-1,1,1,0,1,0,0,1,1,1};
 	for(auto it=cmdList.begin();it!=cmdList.end();it++)
 	{
 		if((*it).cmd==cmd)

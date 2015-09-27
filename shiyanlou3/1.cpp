@@ -31,7 +31,10 @@ int main()
 	{
 		string cmd;
 		getline(cin,cmd);
+		if(cmd=="exit")
+			break;
 		cmdm.Cmdparser(cmd);
+		
 	}
 	
 
