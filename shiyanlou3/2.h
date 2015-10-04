@@ -6,13 +6,15 @@
 using namespace std;
 
 static int id=0;
-typedef struct
+class CMD
 {
+public:
 	int id;
 	string cmd;
 	string help;
+	CMD(int id,string cmd,string help):id(id),cmd(cmd),help(help){};
 		
-}CMD;
+};
 
 class Course
 {

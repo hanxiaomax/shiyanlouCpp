@@ -1,6 +1,8 @@
 #include "2.h"
 
 
+typedef shared_ptr<CMD> CMD_ptr;
+
 Course::Course(string CourseName):CourseName(CourseName)
 {
 	CourseID=setID();
@@ -143,24 +145,25 @@ void CmdManager::printHelp()
 
 CmdManager::CmdManager(CourseManager &cm):cm(cm)
 {
-	CMD cmd1={1,"add","add <course name>"},
-		cmd2={2,"delete","delete <course id/name>"},
-		cmd3={3,"help","print help"},
-	    cmd4={4,"course","print course information"},
-		cmd5={5,"log","print log"},
-		cmd6={6,"courses","print course list"},
-		cmd7={7,"sort","sort <up/down>"},
-		cmd8={8,"find","find <name>"};
-		
+	CMD_ptr cmd1_p=make_shared<CMD>(1,"add","add <course name>"),
+		cmd2_p=make_shared<CMD>(2,"delete","delete <course id/name>"),
+		cmd3_p=make_shared<CMD>(3,"help","print help"),
+		cmd4_p=make_shared<CMD>(4,"course","print course information"),
+		cmd5_p=make_shared<CMD>(5,"log","print log"),
+		cmd6_p=make_shared<CMD>(6,"courses","print course list"),
+		cmd7_p=make_shared<CMD>(7,"sort","sort <up/down>"),
+		cmd8_p=make_shared<CMD>(8,"find","find <name>");
 
-	cmdList.push_back(cmd1);
-	cmdList.push_back(cmd2);
-	cmdList.push_back(cmd3);
-	cmdList.push_back(cmd4);
-	cmdList.push_back(cmd5);
-	cmdList.push_back(cmd6);
-	cmdList.push_back(cmd7);
-	cmdList.push_back(cmd8);
+		
+	//cmdList.insert(cmdList.begin(),{cmd1,cmd2,cmd3,cmd4,cmd5,cmd6,cmd7,cmd8}); vs2010不支持
+	cmdList.push_back(*cmd1_p);
+	cmdList.push_back(*cmd2_p);
+	cmdList.push_back(*cmd3_p);
+	cmdList.push_back(*cmd4_p);
+	cmdList.push_back(*cmd5_p);
+	cmdList.push_back(*cmd6_p);
+	cmdList.push_back(*cmd7_p);
+	cmdList.push_back(*cmd8_p);
 
 }
 //升序
